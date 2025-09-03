@@ -1,0 +1,98 @@
+# -----------------------------
+# SO / Editores
+# -----------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.code-workspace
+
+# -----------------------------
+# Python
+# -----------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+pip-wheel-metadata/
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+.pyre/
+.python-version
+
+# Virtual envs
+.venv/
+venv/
+
+# -----------------------------
+# Jupyter / Notebooks
+# -----------------------------
+.ipynb_checkpoints/
+*.ipynb_convert/
+
+# -----------------------------
+# App / Streamlit
+# -----------------------------
+.streamlit/
+# (se usar credenciais locais, mantenha em .streamlit/secrets.toml e NUNCA versione)
+
+# -----------------------------
+# Config / Segredos
+# -----------------------------
+.env
+.env.*
+*.local.yaml
+secrets*.json
+token*.json
+
+# -----------------------------
+# Dados do projeto
+# -----------------------------
+# Dados brutos e processados ficam fora do git
+data/raw/
+data/processed/
+reports/exports/
+reports/logs/
+
+# Arquivos grandes de dados (garantia extra)
+*.parquet
+*.feather
+*.arrow
+*.orc
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.zip
+*.gz
+*.bz2
+
+# EXCEÇÕES (para manter estrutura)
+!data/.gitkeep
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!reports/.gitkeep
+!reports/exports/.gitkeep
+!reports/logs/.gitkeep
+
+# -----------------------------
+# DuckDB (se gerar arquivos locais)
+# -----------------------------
+*.duckdb
+*.duckdb.wal
+
+# -----------------------------
+# Outros
+# -----------------------------
+logs/
+tmp/

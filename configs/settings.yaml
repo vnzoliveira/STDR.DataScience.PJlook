@@ -1,0 +1,15 @@
+data:
+  raw_excel: "data/raw/Challenge_FIAP_Bases.xlsx"
+  processed_base1: "data/processed/base1"
+  processed_base2: "data/processed/base2"
+
+windows:
+  months_stage: 6   # janela p/ métricas de estágio
+
+domains:
+  ds_tran_map:
+    PIX: "PIX"
+    TED: "TED"
+    BOLETO: "BOLETO"
+    SISTEMICO: "OUTROS"
+    default: "OUTROS"

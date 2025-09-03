@@ -1,0 +1,6 @@
+pandas>=2.2
+numpy>=1.26
+pyarrow>=14.0
+duckdb>=1.0.0
+streamlit>=1.33
+pytest>=8.0

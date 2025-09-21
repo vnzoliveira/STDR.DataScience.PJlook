@@ -91,4 +91,3 @@ def ego_edges_by_month(df, company_id, year_month, direction="both", top_n=15):
     agg["counterparty"] = agg.apply(lambda r: other(r["src"], r["dst"]), axis=1)
     agg = agg.sort_values("valor", ascending=False).head(top_n)
     return agg[["src","dst", "valor"]]
-        

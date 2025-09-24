@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 import numpy as np
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+from src.sna.graph import build_ego_network, to_pyvis_html
+from src.sna.relations import concentration  # já existente
+import streamlit.components.v1 as components
 
 # Para o grafo (Desafio 2)
 import matplotlib.pyplot as plt
@@ -129,38 +135,10 @@ with tab2:
         # Tabela completa (já existia)
         st.subheader("Top relações (tabela)")
         st.dataframe(rel[rel["company_id"]==sel_rel].sort_values("score", ascending=False))
+        st.subheader("Grafo Interativo (Dash – Cytoscape)")
+        st.info("Se o grafo não carregar, rode o micro-app:  `python -m src.graph.dash_app`")
 
-        # ---- Grafo (ego-network) simples ----
-        # carrega base transacional mensal para montar as arestas do mês
-        b2p = Path("data/processed/base2/base2.parquet")
-        if b2p.exists():
-            df_edges = pd.read_parquet(str(b2p))
-            df_edges["year_month"] = df_edges["DT_REFE"]
-
-            # import local para evitar dependência circular
-            from src.sna.relations import ego_edges_by_month
-
-            edges = ego_edges_by_month(df_edges, sel_rel, mes_sel_rel, direction=direction, top_n=15)
-            st.subheader("Grafo do mês (ego-network)")
-            if edges.empty:
-                st.info("Sem arestas para o mês/direção selecionados.")
-            else:
-                # monta e desenha grafo
-                G = nx.DiGraph()
-                for _, r in edges.iterrows():
-                    G.add_edge(r["src"], r["dst"], weight=float(r["valor"]))
-
-                pos = nx.spring_layout(G, seed=42, k=None)  # layout estável
-                plt.figure(figsize=(8,6))
-                # nós — destaca a empresa selecionada
-                node_colors = ["#ef4444" if n==sel_rel else "#60a5fa" for n in G.nodes()]
-                nx.draw_networkx_nodes(G, pos, node_size=800, node_color=node_colors, alpha=0.9)
-                # arestas com largura proporcional ao valor
-                weights = [max(1.0, d["weight"]/edges["valor"].max()*6.0) for _,_,d in G.edges(data=True)]
-                nx.draw_networkx_edges(G, pos, width=weights, arrows=True, arrowstyle="-|>", alpha=0.6)
-                nx.draw_networkx_labels(G, pos, font_size=9)
-
-                st.pyplot(plt.gcf())
-                plt.close()
-        else:
-            st.info("Arquivo de transações processadas não encontrado (data/processed/base2/base2.parquet). Rode o build-all.")
+        company_id = sel_rel  # seu ID já selecionado no Streamlit
+        # Monte uma URL com parâmetros default (opcional)
+        embed_url = f"http://localhost:8050"
+        components.iframe(embed_url, height=820, scrolling=True)

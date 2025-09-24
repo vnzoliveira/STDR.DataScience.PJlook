@@ -1,0 +1,33 @@
+:root{
+  --bg:#0e1117;        /* fundo geral */
+  --panel:#161a23;     /* cartões/painéis */
+  --text:#e6e6e6;
+  --muted:#a3a3a3;
+  --border:#2a2f3a;
+  --accent:#ef4444;
+}
+html,body{background-color:var(--bg)!important;color:var(--text)}
+
+/* -------- cards/tabelas -------- */
+.card,.dbc-card{background:var(--panel)!important;border:1px solid var(--border)!important}
+.table{color:var(--text)}
+.stage-badge{display:inline-block;padding:8px 14px;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;font-size:18px}
+.kpi h3{margin:0;font-size:20px;color:var(--muted)} .kpi h2{margin:2px 0 0}
+
+/* -------- dcc.Dropdown (React-Select v1) -------- */
+.Select-control{background:var(--panel)!important;border:1px solid var(--border)!important; color:var(--text)!important}
+.Select-placeholder, .Select--single>.Select-control .Select-value{color:var(--muted)!important}
+.Select-menu-outer{background:var(--panel)!important;border:1px solid var(--border)!important}
+.VirtualizedSelectOption{background:var(--panel)!important;color:var(--text)!important}
+.VirtualizedSelectFocusedOption{background:#1f2430!important}
+.Select-arrow-zone, .Select-clear-zone{color:var(--muted)!important}
+
+/* Dash >=2.x wrapper */
+.dash-dropdown .Select-menu {background:var(--panel)!important}
+.dash-dropdown .Select-value-label{color:var(--text)!important}
+
+/* -------- tabela dark + números alinhados -------- */
+.table-compact { font-size: 0.92rem; }
+.table thead th { position: sticky; top: 0; background-color: #0b1220; color: var(--muted); z-index: 1; }
+.table tbody tr:hover { background-color: #1b2432; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }

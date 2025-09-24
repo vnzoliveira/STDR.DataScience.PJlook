@@ -57,3 +57,37 @@ def concentration(df, company_id, months_window=12):
         hhi_out = float((shares**2).sum())
 
     return {"hhi_in": hhi_in, "hhi_out": hhi_out}
+
+def ego_edges_by_month(df, company_id, year_month, direction="both", top_n=15):
+    """
+     Retorna arestas (src, dst, peso) do ego-network da company_id no mês selecionado.
+    direction: "in" (quem paga -> company), "out" (company -> recebedor), "both"
+    top_n: limita as contrapartes por maior valor no mês para não poluir o gráfico
+    """
+    
+    ym = pd.to_datetime(year_month).to_period("M").to_timestamp()
+    m = df[df["year_month"]==ym].copy()
+    if m.empty:
+        return pd.DataFrame(columns=["src","dst","valor"])
+    
+    if direction == "in":
+        ego = m[m["ID_RCBE"]==company_id].copy()
+    elif direction == "out":
+        ego = m[m["ID_PGTO"]==company_id].copy()
+    else:
+        ego = m[(m["ID_PGTO"]==company_id) | (m["ID_RCBE"]==company_id)].copy()
+        
+    
+    if ego.empty:
+        return pd.DataFrame(columns=["src","dst","valor"])
+    
+    ego["src"] = ego["ID_PGTO"]
+    ego["dst"] = ego["ID_RCBE"]
+    agg = ego.groupby(["src","dst"], as_index=False)["VL"].sum().rename(columns={"VL":"valor"})
+    
+    def other(u,v):
+        return v if  u==company_id else u
+    
+    agg["counterparty"] = agg.apply(lambda r: other(r["src"], r["dst"]), axis=1)
+    agg = agg.sort_values("valor", ascending=False).head(top_n)
+    return agg[["src","dst", "valor"]]

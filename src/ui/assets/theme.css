@@ -31,3 +31,59 @@ html,body{background-color:var(--bg)!important;color:var(--text)}
 .table thead th { position: sticky; top: 0; background-color: #0b1220; color: var(--muted); z-index: 1; }
 .table tbody tr:hover { background-color: #1b2432; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* -------- Plotly gráficos dark theme -------- */
+.js-plotly-plot .plotly .modebar {
+  background: var(--panel) !important;
+}
+
+.js-plotly-plot .plotly .modebar-btn {
+  color: var(--text) !important;
+}
+
+.js-plotly-plot .plotly .modebar-btn:hover {
+  background: var(--border) !important;
+}
+
+/* Forçar fundo escuro nos gráficos */
+.js-plotly-plot .plotly .main-svg {
+  background: var(--bg) !important;
+}
+
+/* Container dos gráficos */
+.dash-graph {
+  background: var(--bg) !important;
+  border-radius: 8px;
+  min-height: 400px !important;
+}
+
+/* Garantir que o SVG do Plotly seja visível */
+.js-plotly-plot .plot-container {
+  background: var(--bg) !important;
+}
+
+.js-plotly-plot .svg-container {
+  background: var(--bg) !important;
+}
+
+/* Forçar visibilidade do conteúdo do gráfico */
+.js-plotly-plot .main-svg {
+  background: var(--bg) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Melhorar visibilidade do texto nos gráficos */
+.js-plotly-plot .plotly text {
+  fill: var(--text) !important;
+}
+
+.js-plotly-plot .plotly .xtick text,
+.js-plotly-plot .plotly .ytick text {
+  fill: var(--text) !important;
+}
+
+.js-plotly-plot .plotly .xaxis .tick text,
+.js-plotly-plot .plotly .yaxis .tick text {
+  fill: var(--text) !important;
+}

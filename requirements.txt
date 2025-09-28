@@ -1,15 +1,36 @@
-pandas>=2.2
-numpy>=1.26
-pyarrow>=14.0
-duckdb>=1.0.0
-streamlit>=1.33
-pytest>=8.0
-pydantic>=2.10
-PyYAML>=6.0.1
-openpyxl>=3.1.2
-networkx>=3.2
-dash>=2.17
-dash-cytoscape>=0.3.0
-dash-bootstrap-components>=1.6.0
-plotly>=5.22
+# Core Data Science Stack
+pandas>=2.3.0
+numpy>=2.0.0
+pyarrow>=21.0.0
+scipy>=1.16.0
+
+# Database & Storage
+duckdb>=1.4.0
+
+# Machine Learning
+scikit-learn>=1.7.0
+
+# Web Framework & UI - VERSÕES ESPECÍFICAS PARA COMPATIBILIDADE
+dash==2.17.1
+dash-bootstrap-components==1.6.0
+dash-cytoscape>=1.0.0
+plotly==5.22.0
+kaleido>=0.2.1
+
+# Network Analysis
+networkx>=3.5
 pyvis>=0.3.2
+
+# File Processing
+PyYAML>=6.0.3
+openpyxl>=3.1.5
+requests>=2.32.0
+
+# Development & Testing
+pytest>=8.4.0
+pydantic>=2.11.0
+
+# Additional Dependencies
+jinja2>=3.1.6
+flask>=3.1.0
+werkzeug>=3.1.0

@@ -13,6 +13,8 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import time
+from datetime import datetime
 
 from src.ui.components.metrics_formatter import (
     format_currency_br, format_percentage, get_standardized_label, get_metric_color
@@ -142,12 +144,53 @@ def layout():
 
     ids = sorted(f["ID"].unique().tolist())
 
+    # Generate unique timestamp for cache busting
+    timestamp = int(time.time())
+    
     return dbc.Container(fluid=True, children=[
+        # AGGRESSIVE CLIENT-SIDE CACHE BUSTING
+        html.Script(f"""
+        // Force browser cache clear - timestamp: {timestamp}
+        console.log('FIAP Dashboard - Cache busting active: {timestamp}');
+        
+        // Clear all caches
+        if ('caches' in window) {{
+            caches.keys().then(function(names) {{
+                names.forEach(function(name) {{
+                    caches.delete(name);
+                }});
+            }});
+        }}
+        
+        // Force Plotly refresh
+        if (window.Plotly) {{
+            console.log('Clearing Plotly cache...');
+            window.Plotly.purge();
+            // Force re-download of Plotly assets
+            if (window.Plotly.d3) {{
+                delete window.Plotly.d3;
+            }}
+        }}
+        
+        // Force page reload on navigation if cached
+        if (performance.navigation.type === 1) {{
+            console.log('Page reloaded - forcing hard refresh');
+            setTimeout(function() {{
+                window.location.reload(true);
+            }}, 100);
+        }}
+        
+        // Prevent browser caching of AJAX requests
+        if (window.jQuery) {{
+            jQuery.ajaxSetup({{ cache: false }});
+        }}
+        """),
+        
         dbc.Row([
             dbc.Col([
                 html.H2("Dashboard Executivo - Análise Empresarial",
                         style={"color": "#e5e7eb", "marginBottom": "6px"}),
-                html.P("Análise completa com benchmarking setorial e ML avançado",
+                html.P(f"Análise completa com benchmarking setorial e ML avançado - Cache: {timestamp}",
                        style={"color": "#9ca3af", "fontSize": "14px"})
             ], md=8),
             dbc.Col([
@@ -292,12 +335,17 @@ def _update(company_id, periods, view):
 
     # ===== TREND =====
     trend_fig = _trend_fig(df_company)
+    
+    # CACHE BUSTING - Add unique timestamp to figure metadata
+    timestamp = int(time.time())
+    if hasattr(trend_fig, 'layout'):
+        trend_fig.layout.meta = {"timestamp": timestamp, "cache_bust": True}
 
     # ===== EXTRAS VISIBILITY =====
     extras_style = {} if view == "advanced" else {"display": "none"}
 
     # ===== MODEL INFO =====
-    model_info = f"Modelo: Não-supervisionado/supervisionado híbrido | Estágio: {stage} | Confiança: {conf:.0%}"
+    model_info = f"Modelo: Não-supervisionado/supervisionado híbrido | Estágio: {stage} | Confiança: {conf:.0%} | Cache: {timestamp}"
 
     return kpis, main_view, score_comp, insights, trend_fig, extras_style, model_info
 
@@ -433,6 +481,11 @@ def _executive_view(df: pd.DataFrame):
                       font={'color': "#e6e6e6"}, showlegend=True,
                       legend=dict(bgcolor='rgba(30,41,59,0.8)', bordercolor='#475569', borderwidth=1))
     fig.update_xaxes(gridcolor='#374151'); fig.update_yaxes(gridcolor='#374151')
+    
+    # CACHE BUSTING - Add timestamp to figure metadata
+    timestamp = int(time.time())
+    fig.layout.meta = {"timestamp": timestamp, "cache_bust": True}
+    
     return dcc.Graph(figure=fig, config={'displayModeBar': False})
 
 
@@ -478,6 +531,11 @@ def _advanced_view(df: pd.DataFrame):
         text=corr.values, texttemplate='%{text}', textfont={"size":10},
         colorbar=dict(title="Correlação")))
     fig.update_layout(height=420, paper_bgcolor="#0e1117", font={'color': "#e6e6e6"})
+    
+    # CACHE BUSTING - Add timestamp to figure metadata
+    timestamp = int(time.time())
+    fig.layout.meta = {"timestamp": timestamp, "cache_bust": True}
+    
     return dcc.Graph(figure=fig, config={'displayModeBar': False})
 
 
@@ -587,4 +645,9 @@ def _trend_fig(df_company: pd.DataFrame) -> go.Figure:
     fig.update_layout(height=600, paper_bgcolor="#0e1117", plot_bgcolor="#1e293b",
                       font={'color': "#e6e6e6", 'size': 11}, showlegend=False)
     fig.update_xaxes(gridcolor="#374151"); fig.update_yaxes(gridcolor="#374151")
+    
+    # CACHE BUSTING - Add timestamp to figure metadata
+    timestamp = int(time.time())
+    fig.layout.meta = {"timestamp": timestamp, "cache_bust": True}
+    
     return fig

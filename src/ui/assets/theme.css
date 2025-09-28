@@ -1,38 +1,122 @@
-:root{
-  --bg:#0e1117;        /* fundo geral */
-  --panel:#161a23;     /* cartões/painéis */
-  --text:#e6e6e6;
-  --muted:#a3a3a3;
-  --border:#2a2f3a;
-  --accent:#ef4444;
+/* FIAP Datalab - Dark Theme Optimized */
+:root {
+  --bg: #0e1117;
+  --panel: #161a23;
+  --text: #e6e6e6;
+  --muted: #a3a3a3;
+  --border: #2a2f3a;
+  --accent: #ef4444;
+  --hover: #1f2430;
 }
-html,body{background-color:var(--bg)!important;color:var(--text)}
 
-/* -------- cards/tabelas -------- */
-.card,.dbc-card{background:var(--panel)!important;border:1px solid var(--border)!important}
-.table{color:var(--text)}
-.stage-badge{display:inline-block;padding:8px 14px;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;font-size:18px}
-.kpi h3{margin:0;font-size:20px;color:var(--muted)} .kpi h2{margin:2px 0 0}
+/* Base styling */
+html, body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
-/* -------- dcc.Dropdown (React-Select v1) -------- */
-.Select-control{background:var(--panel)!important;border:1px solid var(--border)!important; color:var(--text)!important}
-.Select-placeholder, .Select--single>.Select-control .Select-value{color:var(--muted)!important}
-.Select-menu-outer{background:var(--panel)!important;border:1px solid var(--border)!important}
-.VirtualizedSelectOption{background:var(--panel)!important;color:var(--text)!important}
-.VirtualizedSelectFocusedOption{background:#1f2430!important}
-.Select-arrow-zone, .Select-clear-zone{color:var(--muted)!important}
+/* Cards and containers */
+.card, .dbc-card {
+  background: var(--panel) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
 
-/* Dash >=2.x wrapper */
-.dash-dropdown .Select-menu {background:var(--panel)!important}
-.dash-dropdown .Select-value-label{color:var(--text)!important}
+.card-body {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+}
 
-/* -------- tabela dark + números alinhados -------- */
-.table-compact { font-size: 0.92rem; }
-.table thead th { position: sticky; top: 0; background-color: #0b1220; color: var(--muted); z-index: 1; }
-.table tbody tr:hover { background-color: #1b2432; }
-td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+/* KPI styling */
+.stage-badge {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+}
 
-/* -------- Plotly gráficos dark theme -------- */
+.kpi h3 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--muted);
+}
+
+.kpi h2 {
+  margin: 2px 0 0;
+  color: var(--text);
+}
+
+/* Dropdown styling - React-Select v1 */
+.Select-control {
+  background: var(--panel) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+}
+
+.Select-placeholder,
+.Select--single > .Select-control .Select-value {
+  color: var(--muted) !important;
+}
+
+.Select-menu-outer {
+  background: var(--panel) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.VirtualizedSelectOption {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+}
+
+.VirtualizedSelectFocusedOption {
+  background: var(--hover) !important;
+}
+
+.Select-arrow-zone,
+.Select-clear-zone {
+  color: var(--muted) !important;
+}
+
+/* Dash v2+ dropdown wrapper */
+.dash-dropdown .Select-menu {
+  background: var(--panel) !important;
+}
+
+.dash-dropdown .Select-value-label {
+  color: var(--text) !important;
+}
+
+/* Table styling */
+.table {
+  color: var(--text) !important;
+}
+
+.table-compact {
+  font-size: 0.92rem;
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #0b1220;
+  color: var(--muted);
+  z-index: 1;
+}
+
+.table tbody tr:hover {
+  background-color: #1b2432;
+}
+
+td.num, th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Plotly chart styling - SIMPLIFIED */
 .js-plotly-plot .plotly .modebar {
   background: var(--panel) !important;
 }
@@ -42,48 +126,25 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 }
 
 .js-plotly-plot .plotly .modebar-btn:hover {
-  background: var(--border) !important;
+  background: var(--hover) !important;
 }
 
-/* Forçar fundo escuro nos gráficos */
-.js-plotly-plot .plotly .main-svg {
-  background: var(--bg) !important;
-}
-
-/* Container dos gráficos */
+/* Chart containers */
 .dash-graph {
   background: var(--bg) !important;
   border-radius: 8px;
   min-height: 400px !important;
+  border: 1px solid var(--border);
 }
 
-/* Garantir que o SVG do Plotly seja visível */
-.js-plotly-plot .plot-container {
-  background: var(--bg) !important;
-}
-
-.js-plotly-plot .svg-container {
-  background: var(--bg) !important;
-}
-
-/* Forçar visibilidade do conteúdo do gráfico */
+/* Force chart visibility - CRITICAL FOR RENDERING */
 .js-plotly-plot .main-svg {
   background: var(--bg) !important;
   opacity: 1 !important;
   visibility: visible !important;
 }
 
-/* Melhorar visibilidade do texto nos gráficos */
-.js-plotly-plot .plotly text {
-  fill: var(--text) !important;
-}
-
-.js-plotly-plot .plotly .xtick text,
-.js-plotly-plot .plotly .ytick text {
-  fill: var(--text) !important;
-}
-
-.js-plotly-plot .plotly .xaxis .tick text,
-.js-plotly-plot .plotly .yaxis .tick text {
-  fill: var(--text) !important;
+.js-plotly-plot .plot-container,
+.js-plotly-plot .svg-container {
+  background: var(--bg) !important;
 }

@@ -6,7 +6,7 @@ Dashboard executivo do Desafio 1 (corrigido e robusto).
 - Visualizações resilientes a NaN/inf/colunas ausentes
 """
 from __future__ import annotations
-from dash import register_page, dcc, html, Input, Output, State, callback, no_update
+from dash import register_page, dcc, html, Input, Output, State, callback, no_update, callback_context
 import dash_bootstrap_components as dbc
 from pathlib import Path
 import pandas as pd
@@ -184,20 +184,66 @@ def layout():
         if (window.jQuery) {{
             jQuery.ajaxSetup({{ cache: false }});
         }}
+        
+        // FORCE dropdown dark theme via JavaScript
+        function forceDarkDropdowns() {{
+            // Find all dropdown controls
+            const dropdowns = document.querySelectorAll('.Select-control, [class*="Select-control"], .dash-dropdown, [id*="dropdown"]');
+            dropdowns.forEach(function(dropdown) {{
+                dropdown.style.backgroundColor = '#161a23';
+                dropdown.style.color = '#f1f5f9';
+                dropdown.style.borderColor = '#42495a';
+            }});
+            
+            // Find all dropdown menus (when opened)
+            const menus = document.querySelectorAll('.Select-menu-outer, .Select-menu, .VirtualizedSelectOption');
+            menus.forEach(function(menu) {{
+                menu.style.backgroundColor = '#161a23';
+                menu.style.color = '#f1f5f9';
+                menu.style.borderColor = '#42495a';
+            }});
+            
+            // Find all options
+            const options = document.querySelectorAll('.Select-option, .VirtualizedSelectOption');
+            options.forEach(function(option) {{
+                option.style.backgroundColor = '#161a23';
+                option.style.color = '#f1f5f9';
+            }});
+            
+            // Find all React-generated elements
+            const reactElements = document.querySelectorAll('[class*="css-"][class*="control"], [class*="css-"][class*="menu"]');
+            reactElements.forEach(function(element) {{
+                element.style.backgroundColor = '#161a23';
+                element.style.color = '#f1f5f9';
+                element.style.borderColor = '#42495a';
+            }});
+        }}
+        
+        // Run immediately and on DOM changes
+        forceDarkDropdowns();
+        setTimeout(forceDarkDropdowns, 100);
+        setTimeout(forceDarkDropdowns, 500);
+        setTimeout(forceDarkDropdowns, 1000);
+        
+        // Watch for DOM changes (React re-renders)
+        if (window.MutationObserver) {{
+            const observer = new MutationObserver(forceDarkDropdowns);
+            observer.observe(document.body, {{ childList: true, subtree: true }});
+        }}
         """),
         
         dbc.Row([
             dbc.Col([
                 html.H2("Dashboard Executivo - Análise Empresarial",
-                        style={"color": "#e5e7eb", "marginBottom": "6px"}),
+                        style={"color": "#f1f5f9", "marginBottom": "6px", "fontWeight": "600"}),
                 html.P(f"Análise completa com benchmarking setorial e ML avançado - Cache: {timestamp}",
-                       style={"color": "#9ca3af", "fontSize": "14px"})
+                       style={"color": "#cbd5e1", "fontSize": "14px"})
             ], md=8),
             dbc.Col([
                 html.Div([
-                    html.Small("Última atualização: ", style={"color": "#9ca3af"}),
+                    html.Small("Última atualização: ", style={"color": "#cbd5e1"}),
                     html.Small(pd.Timestamp.now().strftime("%d/%m/%Y %H:%M"),
-                               style={"color": "#60a5fa"})
+                               style={"color": "#3b82f6", "fontWeight": "500"})
                 ], className="text-end", style={"marginTop": "20px"})
             ], md=4)
         ], className="mb-4", style={"borderBottom": "1px solid #374151", "paddingBottom": "14px"}),
@@ -205,28 +251,30 @@ def layout():
         # Filtros
         dbc.Row([
             dbc.Col([
-                html.Label("Empresa", style={"color": "#9ca3af", "fontSize": "12px"}),
+                html.Label("Empresa", style={"color": "#cbd5e1", "fontSize": "12px", "fontWeight": "500"}),
                 dcc.Dropdown(id="d1-company", options=[{"label": i, "value": i} for i in ids],
-                             value=ids[0], clearable=False, className="dash-dropdown-dark")
+                             value=ids[0], clearable=False, className="dash-dropdown-dark",
+                             style={"backgroundColor": "#161a23", "color": "#f1f5f9"})
             ], md=3),
             dbc.Col([
-                html.Label("Período", style={"color": "#9ca3af", "fontSize": "12px"}),
+                html.Label("Período", style={"color": "#cbd5e1", "fontSize": "12px", "fontWeight": "500"}),
                 dcc.Dropdown(id="d1-period", options=[], value=[], multi=True,
                              className="dash-dropdown-dark",
+                             style={"backgroundColor": "#161a23", "color": "#f1f5f9"},
                              placeholder="Selecione meses...")
             ], md=5),
             dbc.Col([
-                html.Label("Visualização", style={"color": "#9ca3af", "fontSize": "12px"}),
-                dcc.RadioItems(
-                    id="d1-view",
-                    options=[
-                        {"label": "📈 Executivo", "value": "executive"},
-                        {"label": "🎯 Benchmarking", "value": "benchmark"},
-                        {"label": "🔬 Análise Avançada", "value": "advanced"}
-                    ],
-                    value="executive", inline=True, className="radio-dark",
-                    style={"marginTop": "5px"}
-                )
+                html.Label("Visualização", style={"color": "#cbd5e1", "fontSize": "12px", "fontWeight": "500", "marginBottom": "8px"}),
+                dbc.ButtonGroup([
+                    dbc.Button("📈 Executivo", id="btn-executive", color="primary", 
+                              size="sm", className="view-button active-view"),
+                    dbc.Button("🎯 Benchmarking", id="btn-benchmark", color="secondary", 
+                              size="sm", className="view-button"),
+                    dbc.Button("🔬 Análise Avançada", id="btn-advanced", color="secondary", 
+                              size="sm", className="view-button")
+                ], className="d-flex w-100"),
+                # Hidden component para manter compatibilidade com callback
+                dcc.Store(id="d1-view", data="executive")
             ], md=4)
         ], className="mb-3"),
 
@@ -238,11 +286,11 @@ def layout():
             dbc.Col(dbc.Card(dbc.CardBody(html.Div(id="d1-main"))), md=8, className="card-dark"),
             dbc.Col([
                 dbc.Card(dbc.CardBody([
-                    html.H6("Score Competitivo", style={"color": "#e5e7eb"}),
+                    html.H6("Score Competitivo", style={"color": "#f1f5f9", "fontWeight": "600"}),
                     html.Div(id="d1-score")
                 ]), className="card-dark mb-3"),
                 dbc.Card(dbc.CardBody([
-                    html.H6("Insights & Recomendações", style={"color": "#e5e7eb"}),
+                    html.H6("Insights & Recomendações", style={"color": "#f1f5f9", "fontWeight": "600"}),
                     html.Div(id="d1-insights", style={"maxHeight": "420px", "overflowY": "auto"})
                 ]), className="card-dark")
             ], md=4)
@@ -283,6 +331,39 @@ def _sync_period(company_id: str):
 
 # ===================== CALLBACK PRINCIPAL =====================
 
+# Callback para gerenciar botões de visualização
+@callback(
+    [Output("d1-view", "data"),
+     Output("btn-executive", "color"),
+     Output("btn-executive", "className"),
+     Output("btn-benchmark", "color"),
+     Output("btn-benchmark", "className"),
+     Output("btn-advanced", "color"),
+     Output("btn-advanced", "className")],
+    [Input("btn-executive", "n_clicks"),
+     Input("btn-benchmark", "n_clicks"),
+     Input("btn-advanced", "n_clicks")],
+    prevent_initial_call=True
+)
+def update_view_buttons(exec_clicks, bench_clicks, adv_clicks):
+    ctx = callback_context
+    if not ctx.triggered:
+        return "executive", "primary", "view-button active-view", "secondary", "view-button", "secondary", "view-button"
+    
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    if button_id == "btn-executive":
+        return ("executive", "primary", "view-button active-view", 
+                "secondary", "view-button", "secondary", "view-button")
+    elif button_id == "btn-benchmark":
+        return ("benchmark", "secondary", "view-button", 
+                "primary", "view-button active-view", "secondary", "view-button")
+    elif button_id == "btn-advanced":
+        return ("advanced", "secondary", "view-button", 
+                "secondary", "view-button", "primary", "view-button active-view")
+    
+    return "executive", "primary", "view-button active-view", "secondary", "view-button", "secondary", "view-button"
+
 @callback(
     Output("d1-kpis", "children"),
     Output("d1-main", "children"),
@@ -293,7 +374,7 @@ def _sync_period(company_id: str):
     Output("d1-model", "children"),
     Input("d1-company", "value"),
     Input("d1-period", "value"),
-    Input("d1-view", "value")
+    Input("d1-view", "data")  # Mudança aqui: agora recebe do Store
 )
 def _update(company_id, periods, view):
     f, e, companies = load_all_data()
@@ -408,91 +489,162 @@ def _kpi_cards(df: pd.DataFrame, e: pd.DataFrame, company_id: str):
 
 
 def _executive_view(df: pd.DataFrame):
-    fig = make_subplots(
-        rows=2, cols=2,
-        subplot_titles=("Evolução Financeira", "Composição",
-                        "Variação do Fluxo", "Correlação Receita x Cresc."),
-        specs=[[{"type": "scatter"}, {"type": "pie"}],
-               [{"type": "bar"}, {"type": "scatter"}]],
-        vertical_spacing=0.14, horizontal_spacing=0.12
-    )
+    """Vista executiva com gráficos individuais em layout dinâmico"""
+    timestamp = int(time.time())
     x = df["year_month"].dt.to_pydatetime().tolist()
-
+    
+    # ===== GRÁFICO 1: EVOLUÇÃO FINANCEIRA (HORIZONTAL MAIOR) =====
+    fig_evolution = go.Figure()
     if "receita_mensal" in df.columns:
-        fig.add_scatter(
-            x=x,
-            y=df["receita_mensal"].tolist(),
-            name='Receita',
-            mode='lines+markers',
+        fig_evolution.add_scatter(
+            x=x, y=df["receita_mensal"].tolist(),
+            name='Receita', mode='lines+markers',
             line=dict(color='#22c55e', width=3),
             marker=dict(size=8)
         )
     if "despesa_mensal" in df.columns:
-        fig.add_scatter(
-            x=x,
-            y=df["despesa_mensal"].tolist(),
-            name='Despesa',
-            mode='lines+markers',
+        fig_evolution.add_scatter(
+            x=x, y=df["despesa_mensal"].tolist(),
+            name='Despesa', mode='lines+markers',
             line=dict(color='#ef4444', width=3),
             marker=dict(size=8)
         )
     if "fluxo_liquido" in df.columns:
-        fig.add_scatter(
-            x=x,
-            y=df["fluxo_liquido"].tolist(),
-            name='Fluxo',
-            mode='lines+markers',
+        fig_evolution.add_scatter(
+            x=x, y=df["fluxo_liquido"].tolist(),
+            name='Fluxo', mode='lines+markers',
             line=dict(color='#3b82f6', width=3),
             marker=dict(size=8)
         )
-
-    # Pie (despesa vs lucro)
+    
+    fig_evolution.update_layout(
+        title="Evolução Financeira",
+        height=350, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font={'color': "#e6e6e6", 'size': 12},
+        legend=dict(bgcolor='rgba(0,0,0,0)', bordercolor='rgba(66,73,90,0.5)', borderwidth=1),
+        margin=dict(l=40, r=40, t=50, b=40)
+    )
+    fig_evolution.update_xaxes(gridcolor='#42495a', gridwidth=0.5)
+    fig_evolution.update_yaxes(gridcolor='#42495a', gridwidth=0.5)
+    fig_evolution.layout.meta = {"timestamp": timestamp, "cache_bust": True}
+    
+    # ===== GRÁFICO 2: COMPOSIÇÃO (PIE MENOR) =====
     rec = float(df.get("receita_mensal", pd.Series([0])).sum())
     desp = float(df.get("despesa_mensal", pd.Series([0])).sum())
-    luc  = max(0.0, rec - desp)
-    fig.add_trace(go.Pie(labels=["Despesas", "Lucro"],
-                         values=[desp, luc],
-                         hole=0.4,
-                         marker=dict(colors=["#ef4444", "#22c55e"])),
-                  row=1, col=2)
-
-    # Variação do fluxo (delta mês a mês)
+    luc = max(0.0, rec - desp)
+    
+    fig_composition = go.Figure(data=[go.Pie(
+        labels=["Despesas", "Lucro"],
+        values=[desp, luc],
+        hole=0.4,
+        marker=dict(colors=["#ef4444", "#22c55e"]),
+        textinfo='label+percent',
+        textfont=dict(size=12)
+    )])
+    
+    fig_composition.update_layout(
+        title="Composição Financeira",
+        height=300, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font={'color': "#e6e6e6", 'size': 12},
+        margin=dict(l=20, r=20, t=50, b=20)
+    )
+    fig_composition.layout.meta = {"timestamp": timestamp, "cache_bust": True}
+    
+    # ===== GRÁFICO 3: VARIAÇÃO DO FLUXO (HORIZONTAL MAIOR) =====
+    fig_flow = go.Figure()
     if "fluxo_liquido" in df.columns and len(df) >= 2:
         deltas = [df["fluxo_liquido"].iloc[0]] + \
                  [df["fluxo_liquido"].iloc[i] - df["fluxo_liquido"].iloc[i-1] for i in range(1, len(df))]
-        fig.add_trace(go.Bar(x=df["ym_str"], y=deltas,
-                             marker=dict(color=["#22c55e" if v >= 0 else "#ef4444" for v in deltas])),
-                      row=2, col=1)
-
-    # Scatter correlação
+        fig_flow.add_trace(go.Bar(
+            x=df["ym_str"], y=deltas,
+            marker=dict(color=["#22c55e" if v >= 0 else "#ef4444" for v in deltas]),
+            text=[f"{v:+.0f}" for v in deltas],
+            textposition='auto'
+        ))
+    
+    fig_flow.update_layout(
+        title="Variação do Fluxo",
+        height=300, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font={'color': "#e6e6e6", 'size': 12},
+        showlegend=False,
+        margin=dict(l=40, r=40, t=50, b=40)
+    )
+    fig_flow.update_xaxes(gridcolor='#42495a', gridwidth=0.5)
+    fig_flow.update_yaxes(gridcolor='#42495a', gridwidth=0.5)
+    fig_flow.layout.meta = {"timestamp": timestamp, "cache_bust": True}
+    
+    # ===== GRÁFICO 4: CORRELAÇÃO (SCATTER MENOR) =====
+    fig_correlation = go.Figure()
     if "g_receita_mom" in df.columns and "receita_mensal" in df.columns:
-        fig.add_trace(go.Scatter(
-            x=_safe_num(df["receita_mensal"]), y=_safe_num(df["g_receita_mom"]) * 100,
+        fig_correlation.add_trace(go.Scatter(
+            x=_safe_num(df["receita_mensal"]), 
+            y=_safe_num(df["g_receita_mom"]) * 100,
             mode="markers",
-            marker=dict(size=10,
-                        color=_safe_num(df.get("fluxo_liquido", 0.0)),
-                        colorscale="RdYlGn", showscale=True,
-                        colorbar=dict(title="Fluxo", x=1.15)),
+            marker=dict(
+                size=12,
+                color=_safe_num(df.get("fluxo_liquido", 0.0)),
+                colorscale="RdYlGn", 
+                showscale=True,
+                colorbar=dict(title="Fluxo", len=0.7)
+            ),
             text=df["ym_str"],
             hovertemplate="Mês: %{text}<br>Receita: %{x:,.0f}<br>Crescimento: %{y:.1f}%<extra></extra>"
-        ), row=2, col=2)
-
-    fig.update_layout(height=600, paper_bgcolor="#0e1117", plot_bgcolor="#1e293b",
-                      font={'color': "#e6e6e6"}, showlegend=True,
-                      legend=dict(bgcolor='rgba(30,41,59,0.8)', bordercolor='#475569', borderwidth=1))
-    fig.update_xaxes(gridcolor='#374151'); fig.update_yaxes(gridcolor='#374151')
+        ))
     
-    # CACHE BUSTING - Add timestamp to figure metadata
-    timestamp = int(time.time())
-    fig.layout.meta = {"timestamp": timestamp, "cache_bust": True}
+    fig_correlation.update_layout(
+        title="Correlação Receita x Crescimento",
+        height=300, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font={'color': "#e6e6e6", 'size': 12},
+        showlegend=False,
+        margin=dict(l=40, r=40, t=50, b=40)
+    )
+    fig_correlation.update_xaxes(gridcolor='#42495a', gridwidth=0.5, title="Receita")
+    fig_correlation.update_yaxes(gridcolor='#42495a', gridwidth=0.5, title="Crescimento %")
+    fig_correlation.layout.meta = {"timestamp": timestamp, "cache_bust": True}
     
-    return dcc.Graph(figure=fig, config={'displayModeBar': False})
+    # ===== LAYOUT DINÂMICO COM DIVS SEPARADAS =====
+    return html.Div([
+        # Linha 1: Evolução Financeira (largura total)
+        dbc.Row([
+            dbc.Col([
+                html.Div([
+                    dcc.Graph(figure=fig_evolution, config={'displayModeBar': False})
+                ], className="chart-card")
+            ], width=12)
+        ], className="mb-3"),
+        
+        # Linha 2: Composição + Variação do Fluxo
+        dbc.Row([
+            dbc.Col([
+                html.Div([
+                    dcc.Graph(figure=fig_composition, config={'displayModeBar': False})
+                ], className="chart-card")
+            ], width=4),
+            dbc.Col([
+                html.Div([
+                    dcc.Graph(figure=fig_flow, config={'displayModeBar': False})
+                ], className="chart-card")
+            ], width=8)
+        ], className="mb-3"),
+        
+        # Linha 3: Correlação (largura total)
+        dbc.Row([
+            dbc.Col([
+                html.Div([
+                    dcc.Graph(figure=fig_correlation, config={'displayModeBar': False})
+                ], className="chart-card")
+            ], width=12)
+        ])
+    ])
 
 
 def _benchmark_view(company_id: str, companies: pd.DataFrame):
     """Radar simplificado vs 'média' (50) para visual rápido."""
     if companies.empty or company_id not in companies["ID"].values:
-        return html.Div("Sem base para benchmarking.")
+        return html.Div([
+            html.H5("Sem base para benchmarking.", className="text-center text-muted mt-4")
+        ], className="chart-card")
+    
     row = companies[companies["ID"] == company_id].iloc[0]
     def _clip100(x): return float(np.clip(x, 0, 100))
 
@@ -505,43 +657,166 @@ def _benchmark_view(company_id: str, companies: pd.DataFrame):
     cats = ["Receita", "Crescimento", "Margem", "Consistência", "Eficiência"]
     vals = [receita, cresc, margem, consist, efic]
 
+    timestamp = int(time.time())
     fig = go.Figure()
-    fig.add_trace(go.Scatterpolar(r=vals, theta=cats, fill='toself',
-                                  fillcolor='rgba(34,197,94,0.25)',
-                                  line=dict(color='#22c55e', width=2),
-                                  marker=dict(size=6), name='Empresa'))
-    fig.add_trace(go.Scatterpolar(r=[50]*len(cats), theta=cats,
-                                  line=dict(color='#6b7280', width=1, dash='dash'),
-                                  name='Média Setor'))
-    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0,100], gridcolor="#374151")),
-                      showlegend=True, height=420,
-                      paper_bgcolor="#0e1117", font={'color': "#e6e6e6"})
-    return dcc.Graph(figure=fig, config={'displayModeBar': False})
+    
+    # Empresa (área preenchida)
+    fig.add_trace(go.Scatterpolar(
+        r=vals, theta=cats, fill='toself',
+        fillcolor='rgba(34,197,94,0.25)',
+        line=dict(color='#22c55e', width=2),
+        marker=dict(size=8, color='#22c55e'),
+        name='Empresa'
+    ))
+    
+    # Média do setor (linha tracejada)
+    fig.add_trace(go.Scatterpolar(
+        r=[50]*len(cats), theta=cats,
+        line=dict(color='#6b7280', width=2, dash='dash'),
+        marker=dict(size=6, color='#6b7280'),
+        name='Média Setor'
+    ))
+    
+    fig.update_layout(
+        polar=dict(
+            bgcolor="rgba(0,0,0,0)",
+            radialaxis=dict(
+                visible=True, 
+                range=[0, 100], 
+                gridcolor="#42495a",
+                gridwidth=1,
+                tickfont=dict(size=10, color="#e6e6e6")
+            ),
+            angularaxis=dict(
+                gridcolor="#42495a",
+                gridwidth=1,
+                tickfont=dict(size=12, color="#e6e6e6")
+            )
+        ),
+        showlegend=True,
+        legend=dict(
+            bgcolor='rgba(0,0,0,0)', 
+            bordercolor='rgba(66,73,90,0.5)', 
+            borderwidth=1,
+            font=dict(color="#e6e6e6")
+        ),
+        height=450,  # Aumentado para melhor visibilidade
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font={'color': "#e6e6e6", 'size': 12},
+        margin=dict(l=40, r=40, t=40, b=40)
+    )
+    fig.layout.meta = {"timestamp": timestamp, "cache_bust": True}
+    
+    return html.Div([
+        dcc.Graph(figure=fig, config={'displayModeBar': False})
+    ], className="chart-card")
 
 
 def _advanced_view(df: pd.DataFrame):
     """Heatmap de correlação minimalista (quando houver colunas suficientes)."""
     cols = [c for c in ['receita_mensal','despesa_mensal','fluxo_liquido','g_receita_mom','vol_receita_3m'] if c in df.columns]
     if len(cols) < 2:
-        return html.Div("Dados insuficientes para correlação.")
-    corr = df[cols].corr().round(2)
-    fig = go.Figure(data=go.Heatmap(
-        z=corr.values, x=corr.columns, y=corr.columns,
-        colorscale='RdBu', zmid=0,
-        text=corr.values, texttemplate='%{text}', textfont={"size":10},
-        colorbar=dict(title="Correlação")))
-    fig.update_layout(height=420, paper_bgcolor="#0e1117", font={'color': "#e6e6e6"})
+        return html.Div([
+            html.H5("Dados insuficientes para correlação.", className="text-center text-muted mt-4")
+        ], className="chart-card")
     
-    # CACHE BUSTING - Add timestamp to figure metadata
+    corr = df[cols].corr().round(2)
     timestamp = int(time.time())
+    
+    fig = go.Figure(data=go.Heatmap(
+        z=corr.values, 
+        x=corr.columns, 
+        y=corr.columns,
+        colorscale='RdBu', 
+        zmid=0,
+        text=corr.values, 
+        texttemplate='%{text}', 
+        textfont={"size": 11, "color": "#ffffff"},
+        colorbar=dict(
+            title="Correlação",
+            tickfont=dict(color="#e6e6e6"),
+            bgcolor="rgba(22,26,35,0.9)",
+            bordercolor="#42495a",
+            borderwidth=1
+        ),
+        hoverongaps=False
+    ))
+    
+    fig.update_layout(
+        title="Matriz de Correlação",
+        height=450,  # Aumentado para melhor visibilidade
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font={'color': "#e6e6e6", 'size': 12},
+        margin=dict(l=60, r=60, t=60, b=60)
+    )
+    
+    # Melhorar aparência dos eixos
+    fig.update_xaxes(
+        tickangle=45,
+        tickfont=dict(size=10, color="#e6e6e6"),
+        gridcolor="#42495a"
+    )
+    fig.update_yaxes(
+        tickfont=dict(size=10, color="#e6e6e6"),
+        gridcolor="#42495a"
+    )
+    
     fig.layout.meta = {"timestamp": timestamp, "cache_bust": True}
     
-    return dcc.Graph(figure=fig, config={'displayModeBar': False})
+    return html.Div([
+        dcc.Graph(figure=fig, config={'displayModeBar': False})
+    ], className="chart-card")
 
+
+def _gauge(value: float, title: str) -> go.Figure:
+    """Cria um gauge elegante e bem dimensionado"""
+    timestamp = int(time.time())
+    
+    fig = go.Figure(go.Indicator(
+        mode="gauge+number+delta",
+        value=value,
+        domain={'x': [0, 1], 'y': [0, 1]},
+        title={'text': title, 'font': {'size': 16, 'color': '#e6e6e6'}},
+        delta={'reference': 50, 'increasing': {'color': "#22c55e"}, 'decreasing': {'color': "#ef4444"}},
+        gauge={
+            'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "#e6e6e6"},
+            'bar': {'color': "#3b82f6"},
+            'bgcolor': "rgba(22,26,35,0.8)",
+            'borderwidth': 2,
+            'bordercolor': "#42495a",
+            'steps': [
+                {'range': [0, 25], 'color': "rgba(239, 68, 68, 0.3)"},
+                {'range': [25, 50], 'color': "rgba(245, 158, 11, 0.3)"},
+                {'range': [50, 75], 'color': "rgba(34, 197, 94, 0.3)"},
+                {'range': [75, 100], 'color': "rgba(34, 197, 94, 0.5)"}
+            ],
+            'threshold': {
+                'line': {'color': "#ef4444", 'width': 4},
+                'thickness': 0.75,
+                'value': 90
+            }
+        }
+    ))
+    
+    fig.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font={'color': "#e6e6e6", 'size': 14},
+        height=280,  # Aumentado para melhor visibilidade
+        margin=dict(l=20, r=20, t=60, b=20)
+    )
+    fig.layout.meta = {"timestamp": timestamp, "cache_bust": True}
+    
+    return fig
 
 def _competitive_score(company_id: str, companies: pd.DataFrame):
     if companies.empty or company_id not in companies["ID"].values:
-        return dcc.Graph(figure=_gauge(50, "Score Competitivo"), config={'displayModeBar': False})
+        return html.Div([
+            dcc.Graph(figure=_gauge(50, "Score Competitivo"), config={'displayModeBar': False})
+        ], className="chart-card")
+    
     # score simples por percentis das métricas-chave
     row = companies[companies["ID"] == company_id].iloc[0]
     parts = []
@@ -554,7 +829,10 @@ def _competitive_score(company_id: str, companies: pd.DataFrame):
         else:
             parts.append(np.clip(v*40, 0, 40))
     total = float(sum(parts))
-    return dcc.Graph(figure=_gauge(total, "Score Competitivo"), config={'displayModeBar': False})
+    
+    return html.Div([
+        dcc.Graph(figure=_gauge(total, "Score Competitivo"), config={'displayModeBar': False})
+    ], className="chart-card")
 
 
 def _insights(stage: str, conf: float, df: pd.DataFrame):
@@ -642,9 +920,16 @@ def _trend_fig(df_company: pd.DataFrame) -> go.Figure:
                                  mode="lines+markers", name="Consistência %",
                                  line=dict(color="#8b5cf6", width=2)), row=2, col=2)
 
-    fig.update_layout(height=600, paper_bgcolor="#0e1117", plot_bgcolor="#1e293b",
-                      font={'color': "#e6e6e6", 'size': 11}, showlegend=False)
-    fig.update_xaxes(gridcolor="#374151"); fig.update_yaxes(gridcolor="#374151")
+    fig.update_layout(
+        height=600, 
+        paper_bgcolor="rgba(0,0,0,0)", 
+        plot_bgcolor="rgba(0,0,0,0)",
+        font={'color': "#e6e6e6", 'size': 11}, 
+        showlegend=False,
+        margin=dict(l=50, r=50, t=60, b=50)
+    )
+    fig.update_xaxes(gridcolor="#42495a", gridwidth=0.5)
+    fig.update_yaxes(gridcolor="#42495a", gridwidth=0.5)
     
     # CACHE BUSTING - Add timestamp to figure metadata
     timestamp = int(time.time())

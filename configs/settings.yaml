@@ -1,5 +1,5 @@
 data:
-  raw_excel: "https://docs.google.com/spreadsheets/d/191QX-rsCOfm9dmlQb4UHMoVHwnEBm9tG/edit?usp=sharing&ouid=103873465285891206693&rtpof=true&sd=true"
+  raw_excel: "data/raw/Challenge_FIAP_Bases.xlsx"
   processed_base1: "data/processed/base1"
   processed_base2: "data/processed/base2"
 

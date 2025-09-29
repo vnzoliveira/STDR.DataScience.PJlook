@@ -146,7 +146,7 @@ def layout():
 
     # Generate unique timestamp for cache busting
     timestamp = int(time.time())
-    
+
     return dbc.Container(fluid=True, children=[
         # AGGRESSIVE CLIENT-SIDE CACHE BUSTING
         html.Script(f"""
@@ -231,7 +231,7 @@ def layout():
             observer.observe(document.body, {{ childList: true, subtree: true }});
         }}
         """),
-        
+
         dbc.Row([
             dbc.Col([
                 html.H2("Dashboard Executivo - Análise Empresarial",
@@ -519,13 +519,13 @@ def _executive_view(df: pd.DataFrame):
     
     fig_evolution.update_layout(
         title="Evolução Financeira",
-        height=350, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font={'color': "#e6e6e6", 'size': 12},
-        legend=dict(bgcolor='rgba(0,0,0,0)', bordercolor='rgba(66,73,90,0.5)', borderwidth=1),
+        height=350, paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+        font={'color': "#1a202c", 'size': 12},
+        legend=dict(bgcolor='rgba(255,255,255,0)', bordercolor='rgba(229,62,62,0.5)', borderwidth=2),
         margin=dict(l=40, r=40, t=50, b=40)
     )
-    fig_evolution.update_xaxes(gridcolor='#42495a', gridwidth=0.5)
-    fig_evolution.update_yaxes(gridcolor='#42495a', gridwidth=0.5)
+    fig_evolution.update_xaxes(gridcolor='#e2e8f0', gridwidth=0.5)
+    fig_evolution.update_yaxes(gridcolor='#e2e8f0', gridwidth=0.5)
     fig_evolution.layout.meta = {"timestamp": timestamp, "cache_bust": True}
     
     # ===== GRÁFICO 2: COMPOSIÇÃO (PIE MENOR) =====
@@ -544,8 +544,8 @@ def _executive_view(df: pd.DataFrame):
     
     fig_composition.update_layout(
         title="Composição Financeira",
-        height=300, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font={'color': "#e6e6e6", 'size': 12},
+        height=300, paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+        font={'color': "#1a202c", 'size': 12},
         margin=dict(l=20, r=20, t=50, b=20)
     )
     fig_composition.layout.meta = {"timestamp": timestamp, "cache_bust": True}
@@ -564,13 +564,13 @@ def _executive_view(df: pd.DataFrame):
     
     fig_flow.update_layout(
         title="Variação do Fluxo",
-        height=300, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font={'color': "#e6e6e6", 'size': 12},
+        height=300, paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+        font={'color': "#1a202c", 'size': 12},
         showlegend=False,
         margin=dict(l=40, r=40, t=50, b=40)
     )
-    fig_flow.update_xaxes(gridcolor='#42495a', gridwidth=0.5)
-    fig_flow.update_yaxes(gridcolor='#42495a', gridwidth=0.5)
+    fig_flow.update_xaxes(gridcolor='#e2e8f0', gridwidth=0.5)
+    fig_flow.update_yaxes(gridcolor='#e2e8f0', gridwidth=0.5)
     fig_flow.layout.meta = {"timestamp": timestamp, "cache_bust": True}
     
     # ===== GRÁFICO 4: CORRELAÇÃO (SCATTER MENOR) =====
@@ -593,13 +593,13 @@ def _executive_view(df: pd.DataFrame):
     
     fig_correlation.update_layout(
         title="Correlação Receita x Crescimento",
-        height=300, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font={'color': "#e6e6e6", 'size': 12},
+        height=300, paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+        font={'color': "#1a202c", 'size': 12},
         showlegend=False,
         margin=dict(l=40, r=40, t=50, b=40)
     )
-    fig_correlation.update_xaxes(gridcolor='#42495a', gridwidth=0.5, title="Receita")
-    fig_correlation.update_yaxes(gridcolor='#42495a', gridwidth=0.5, title="Crescimento %")
+    fig_correlation.update_xaxes(gridcolor='#e2e8f0', gridwidth=0.5, title="Receita")
+    fig_correlation.update_yaxes(gridcolor='#e2e8f0', gridwidth=0.5, title="Crescimento %")
     fig_correlation.layout.meta = {"timestamp": timestamp, "cache_bust": True}
     
     # ===== LAYOUT DINÂMICO COM DIVS SEPARADAS =====
@@ -626,7 +626,7 @@ def _executive_view(df: pd.DataFrame):
                 ], className="chart-card")
             ], width=8)
         ], className="mb-3"),
-        
+
         # Linha 3: Correlação (largura total)
         dbc.Row([
             dbc.Col([
@@ -679,31 +679,31 @@ def _benchmark_view(company_id: str, companies: pd.DataFrame):
     
     fig.update_layout(
         polar=dict(
-            bgcolor="rgba(0,0,0,0)",
+            bgcolor="rgba(255,255,255,0)",
             radialaxis=dict(
                 visible=True, 
                 range=[0, 100], 
-                gridcolor="#42495a",
+                gridcolor="#e2e8f0",
                 gridwidth=1,
-                tickfont=dict(size=10, color="#e6e6e6")
+                tickfont=dict(size=10, color="#1a202c")
             ),
             angularaxis=dict(
-                gridcolor="#42495a",
+                gridcolor="#e2e8f0",
                 gridwidth=1,
-                tickfont=dict(size=12, color="#e6e6e6")
+                tickfont=dict(size=12, color="#1a202c")
             )
         ),
         showlegend=True,
         legend=dict(
-            bgcolor='rgba(0,0,0,0)', 
-            bordercolor='rgba(66,73,90,0.5)', 
-            borderwidth=1,
-            font=dict(color="#e6e6e6")
+            bgcolor='rgba(255,255,255,0)', 
+            bordercolor='rgba(229,62,62,0.5)', 
+            borderwidth=2,
+            font=dict(color="#1a202c")
         ),
         height=450,  # Aumentado para melhor visibilidade
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font={'color': "#e6e6e6", 'size': 12},
+        paper_bgcolor="rgba(255,255,255,0)",
+        plot_bgcolor="rgba(255,255,255,0)",
+        font={'color': "#1a202c", 'size': 12},
         margin=dict(l=40, r=40, t=40, b=40)
     )
     fig.layout.meta = {"timestamp": timestamp, "cache_bust": True}
@@ -746,21 +746,21 @@ def _advanced_view(df: pd.DataFrame):
     fig.update_layout(
         title="Matriz de Correlação",
         height=450,  # Aumentado para melhor visibilidade
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font={'color': "#e6e6e6", 'size': 12},
+        paper_bgcolor="rgba(255,255,255,0)",
+        plot_bgcolor="rgba(255,255,255,0)",
+        font={'color': "#1a202c", 'size': 12},
         margin=dict(l=60, r=60, t=60, b=60)
     )
     
     # Melhorar aparência dos eixos
     fig.update_xaxes(
         tickangle=45,
-        tickfont=dict(size=10, color="#e6e6e6"),
-        gridcolor="#42495a"
+        tickfont=dict(size=10, color="#1a202c"),
+        gridcolor="#e2e8f0"
     )
     fig.update_yaxes(
-        tickfont=dict(size=10, color="#e6e6e6"),
-        gridcolor="#42495a"
+        tickfont=dict(size=10, color="#1a202c"),
+        gridcolor="#e2e8f0"
     )
     
     fig.layout.meta = {"timestamp": timestamp, "cache_bust": True}
@@ -801,9 +801,9 @@ def _gauge(value: float, title: str) -> go.Figure:
     ))
     
     fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font={'color': "#e6e6e6", 'size': 14},
+        paper_bgcolor="rgba(255,255,255,0)",
+        plot_bgcolor="rgba(255,255,255,0)",
+        font={'color': "#1a202c", 'size': 14},
         height=280,  # Aumentado para melhor visibilidade
         margin=dict(l=20, r=20, t=60, b=20)
     )
@@ -826,7 +826,7 @@ def _competitive_score(company_id: str, companies: pd.DataFrame):
             parts.append(np.clip((v/scale)*30, 0, 30))
         elif key == "crescimento_medio":
             parts.append(np.clip(15 + v*50, 0, 30))
-        else:
+    else:
             parts.append(np.clip(v*40, 0, 40))
     total = float(sum(parts))
     
@@ -848,7 +848,7 @@ def _insights(stage: str, conf: float, df: pd.DataFrame):
             items.append(html.Li("📈 Tendência de crescimento forte na receita"))
         elif trend < -1000:
             items.append(html.Li("📉 Tendência de queda na receita"))
-        else:
+    else:
             items.append(html.Li("➡️ Receita relativamente estável"))
 
     if "fluxo_liquido" in df.columns:
@@ -922,14 +922,14 @@ def _trend_fig(df_company: pd.DataFrame) -> go.Figure:
 
     fig.update_layout(
         height=600, 
-        paper_bgcolor="rgba(0,0,0,0)", 
-        plot_bgcolor="rgba(0,0,0,0)",
-        font={'color': "#e6e6e6", 'size': 11}, 
+        paper_bgcolor="rgba(255,255,255,0)", 
+        plot_bgcolor="rgba(255,255,255,0)",
+        font={'color': "#1a202c", 'size': 11}, 
         showlegend=False,
         margin=dict(l=50, r=50, t=60, b=50)
     )
-    fig.update_xaxes(gridcolor="#42495a", gridwidth=0.5)
-    fig.update_yaxes(gridcolor="#42495a", gridwidth=0.5)
+    fig.update_xaxes(gridcolor="#e2e8f0", gridwidth=0.5)
+    fig.update_yaxes(gridcolor="#e2e8f0", gridwidth=0.5)
     
     # CACHE BUSTING - Add timestamp to figure metadata
     timestamp = int(time.time())

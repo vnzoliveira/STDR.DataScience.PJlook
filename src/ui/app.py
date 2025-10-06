@@ -5,7 +5,7 @@ from dash import Dash, dcc, html, page_container
 import dash_bootstrap_components as dbc
 
 # Tema dark consistente
-THEME = dbc.themes.SLATE
+THEME = dbc.themes.CYBORG
 
 # AGGRESSIVE CACHE BUSTING - Force asset refresh
 asset_timestamp = str(int(time.time()))

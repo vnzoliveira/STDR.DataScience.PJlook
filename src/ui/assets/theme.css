@@ -1,0 +1,602 @@
+/* SANTANDER - Professional White & Red Theme */
+:root {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --text: #1a202c;
+  --muted: #4a5568;
+  --border: #e2e8f0;
+  --accent: #e53e3e;
+  --hover: #f7fafc;
+  --success: #38a169;
+  --danger: #e53e3e;
+  --warning: #d69e2e;
+  --santander-red: #e53e3e;
+  --santander-dark-red: #c53030;
+  --santander-light-red: #fed7d7;
+  --panel-light: #f7fafc;
+  --text-bright: #2d3748;
+  --muted-dark: #718096;
+  --border-light: #e2e8f0;
+  --info: #3182ce;
+  --purple: #805ad5;
+}
+
+/* Base styling */
+html, body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+}
+
+/* NAVBAR SANTANDER STYLING */
+.navbar {
+  background: linear-gradient(135deg, var(--santander-red) 0%, var(--santander-dark-red) 100%) !important;
+  border-bottom: 3px solid var(--santander-dark-red) !important;
+  box-shadow: 0 2px 10px rgba(229, 62, 62, 0.3) !important;
+  padding: 12px 0 !important;
+}
+
+.navbar-brand {
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 1.4rem !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+}
+
+.navbar-nav .nav-link {
+  color: rgba(255,255,255,0.9) !important;
+  font-weight: 500 !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+  margin: 0 4px !important;
+}
+
+.navbar-nav .nav-link:hover {
+  color: white !important;
+  background: rgba(255,255,255,0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+.navbar-nav .nav-link.active {
+  color: white !important;
+  background: rgba(255,255,255,0.2) !important;
+  font-weight: 600 !important;
+}
+
+.navbar-toggler {
+  border-color: rgba(255,255,255,0.3) !important;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* GLOBAL dropdown SANTANDER theme - applies to ALL dropdowns */
+.dash-dropdown .Select-control,
+.Select-control,
+div[id*="dropdown"] .Select-control,
+div[class*="dropdown"] .Select-control {
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+  border: 2px solid var(--santander-red) !important;
+  color: var(--text) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(229, 62, 62, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* GLOBAL dropdown text */
+.dash-dropdown .Select-placeholder,
+.dash-dropdown .Select-value-label,
+.Select-placeholder,
+.Select-value-label {
+  color: var(--text) !important;
+  font-weight: 500 !important;
+}
+
+/* GLOBAL dropdown menu */
+.dash-dropdown .Select-menu-outer,
+.Select-menu-outer {
+  background: var(--bg) !important;
+  border: 2px solid var(--santander-red) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(229, 62, 62, 0.15) !important;
+  margin-top: 4px !important;
+}
+
+/* Cards and containers - SANTANDER WHITE */
+.card, .dbc-card {
+  background: var(--panel) !important;
+  border: 2px solid var(--santander-red) !important;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.1) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(229, 62, 62, 0.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+.card-body {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+}
+
+/* SANTANDER card variant */
+.card-dark {
+  background: var(--panel) !important;
+  border: 2px solid var(--santander-red) !important;
+  color: var(--text) !important;
+  border-radius: 12px !important;
+}
+
+.card-dark .card-body {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+}
+
+/* KPI styling - SANTANDER */
+.stage-badge {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--santander-red);
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+}
+
+.kpi h3 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--muted);
+}
+
+.kpi h2 {
+  margin: 2px 0 0;
+  color: var(--text);
+}
+
+/* AGGRESSIVE Dropdown styling - SANTANDER Theme - All possible selectors */
+.dash-dropdown-dark .Select-control,
+.dash-dropdown-dark.dash-dropdown .Select-control,
+div.dash-dropdown-dark .Select-control,
+.dash-dropdown-dark > div > div > div,
+.dash-dropdown-dark .dropdown,
+#d1-company,
+#d1-period {
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+  border: 2px solid var(--santander-red) !important;
+  color: var(--text) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(229, 62, 62, 0.1) !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+.dash-dropdown-dark .Select-control:hover {
+  border-color: var(--santander-dark-red) !important;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2) !important;
+  transform: translateY(-1px) !important;
+}
+
+.dash-dropdown-dark .Select-placeholder,
+.dash-dropdown-dark .Select--single > .Select-control .Select-value {
+  color: var(--text) !important;
+  font-weight: 500 !important;
+}
+
+.dash-dropdown-dark .Select-menu-outer {
+  background: var(--bg) !important;
+  border: 2px solid var(--santander-red) !important;
+  box-shadow: 0 8px 24px rgba(229, 62, 62, 0.15) !important;
+  border-radius: 8px !important;
+  margin-top: 4px !important;
+}
+
+.dash-dropdown-dark .VirtualizedSelectOption {
+  background: transparent !important;
+  color: var(--text) !important;
+  padding: 10px 14px !important;
+  transition: all 0.15s ease-in-out !important;
+  border-radius: 4px !important;
+  margin: 2px 4px !important;
+}
+
+.dash-dropdown-dark .VirtualizedSelectFocusedOption {
+  background: var(--santander-light-red) !important;
+  color: var(--santander-dark-red) !important;
+  font-weight: 600 !important;
+}
+
+.dash-dropdown-dark .Select-arrow-zone,
+.dash-dropdown-dark .Select-clear-zone {
+  color: var(--santander-red) !important;
+}
+
+.dash-dropdown-dark .Select-arrow-zone:hover {
+  color: var(--santander-dark-red) !important;
+}
+
+/* Multi-select tags */
+.dash-dropdown-dark .Select-value {
+  background: var(--santander-light-red) !important;
+  border: 1px solid var(--santander-red) !important;
+  border-radius: 6px !important;
+  color: var(--santander-dark-red) !important;
+  font-weight: 500 !important;
+}
+
+/* Dash v2+ dropdown wrapper */
+.dash-dropdown-dark .Select-menu {
+  background: var(--bg) !important;
+}
+
+.dash-dropdown-dark .Select-value-label {
+  color: var(--text) !important;
+}
+
+/* FORCE all possible dropdown containers to SANTANDER theme */
+.dash-dropdown-dark,
+.dash-dropdown-dark *,
+.dash-dropdown-dark div,
+.dash-dropdown-dark .dropdown,
+.dash-dropdown-dark .Select,
+.dash-dropdown-dark .Select-control {
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* Target specific dropdown IDs directly */
+#d1-company .Select-control,
+#d1-period .Select-control,
+#d1-company > div,
+#d1-period > div,
+#d1-company div[class*="Select"],
+#d1-period div[class*="Select"] {
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+  border: 2px solid var(--santander-red) !important;
+  color: var(--text) !important;
+}
+
+/* Override any dark backgrounds */
+.dash-dropdown-dark [style*="background: black"],
+.dash-dropdown-dark [style*="background-color: black"],
+.dash-dropdown-dark [style*="background: #000"],
+.dash-dropdown-dark [style*="background-color: #000"] {
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+}
+
+/* Table styling - SANTANDER */
+.table {
+  color: var(--text) !important;
+  border: 2px solid var(--santander-red) !important;
+  border-radius: 8px !important;
+}
+
+.table-compact {
+  font-size: 0.92rem;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  background-color: var(--santander-light-red);
+  color: var(--santander-dark-red);
+  font-weight: 600 !important;
+  border-bottom: 2px solid var(--santander-red) !important;
+  z-index: 1;
+}
+
+.table tbody tr:hover {
+  background-color: var(--santander-light-red);
+}
+
+.table tbody tr {
+  border-bottom: 1px solid var(--border-light) !important;
+}
+
+td.num, th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Plotly chart styling - SANTANDER */
+.js-plotly-plot .plotly .modebar {
+  background: var(--panel) !important;
+  border: 1px solid var(--santander-red) !important;
+  border-radius: 6px !important;
+}
+
+.js-plotly-plot .plotly .modebar-btn {
+  color: var(--santander-red) !important;
+}
+
+.js-plotly-plot .plotly .modebar-btn:hover {
+  background: var(--santander-light-red) !important;
+  color: var(--santander-dark-red) !important;
+}
+
+/* Chart containers */
+.dash-graph {
+  background: var(--bg) !important;
+  border-radius: 12px;
+  min-height: 400px !important;
+  border: 2px solid var(--santander-red);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.1);
+}
+
+/* Chart Cards - SANTANDER embedded look */
+.chart-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(247,250,252,0.98) 100%);
+  border: 2px solid var(--santander-red);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 
+    0 4px 16px rgba(229, 62, 62, 0.15),
+    0 2px 8px rgba(229, 62, 62, 0.1),
+    inset 0 1px 0 rgba(229, 62, 62, 0.05);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease-in-out;
+}
+
+.chart-card:hover {
+  border-color: var(--santander-dark-red);
+  box-shadow: 
+    0 8px 24px rgba(229, 62, 62, 0.2),
+    0 4px 12px rgba(229, 62, 62, 0.15),
+    inset 0 1px 0 rgba(229, 62, 62, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Enhanced KPI Cards - SANTANDER */
+.kpi-card {
+  background: linear-gradient(135deg, var(--panel) 0%, rgba(247,250,252,0.95) 100%) !important;
+  border: 2px solid var(--santander-red) !important;
+  box-shadow: 
+    0 4px 16px rgba(229, 62, 62, 0.15),
+    inset 0 1px 0 rgba(229, 62, 62, 0.05) !important;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease-in-out;
+  color: var(--text) !important;
+  border-radius: 12px !important;
+}
+
+.kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 8px 24px rgba(229, 62, 62, 0.2),
+    inset 0 1px 0 rgba(229, 62, 62, 0.1) !important;
+  border-color: var(--santander-dark-red) !important;
+}
+
+/* Subtle separators */
+.mb-3 {
+  border-bottom: 1px solid rgba(229, 62, 62, 0.2);
+  padding-bottom: 8px;
+}
+
+.mb-3:last-child {
+  border-bottom: none;
+}
+
+/* Force chart visibility - CRITICAL FOR RENDERING */
+.js-plotly-plot .main-svg {
+  background: transparent !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* ====== DESAFIO 2 - SNA STYLES ====== */
+
+/* Radio buttons modernos - SANTANDER */
+.radio-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radio-modern label {
+  color: var(--text) !important;
+  background: var(--panel) !important;
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+  border: 2px solid var(--santander-red) !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+  font-weight: 500 !important;
+}
+
+.radio-modern label:hover {
+  background: var(--santander-light-red) !important;
+  border-color: var(--santander-dark-red) !important;
+  color: var(--santander-dark-red) !important;
+}
+
+.radio-modern input[type="radio"] {
+  margin-right: 8px !important;
+  accent-color: var(--santander-red) !important;
+}
+
+/* Risk badges - SANTANDER */
+.risk-badge-baixo { 
+  background: var(--success) !important; 
+  color: white !important;
+  border: 1px solid var(--success) !important;
+}
+.risk-badge-medio { 
+  background: var(--warning) !important; 
+  color: white !important;
+  border: 1px solid var(--warning) !important;
+}
+.risk-badge-alto { 
+  background: #ea580c !important; 
+  color: white !important;
+  border: 1px solid #ea580c !important;
+}
+.risk-badge-critico { 
+  background: var(--santander-red) !important; 
+  color: white !important;
+  border: 1px solid var(--santander-red) !important;
+}
+
+.js-plotly-plot .plot-container,
+.js-plotly-plot .svg-container {
+  background: transparent !important;
+}
+
+/* Plotly integration with chart cards */
+.chart-card .js-plotly-plot {
+  background: transparent !important;
+  border-radius: 8px;
+}
+
+.chart-card .js-plotly-plot .plotly {
+  background: transparent !important;
+}
+
+/* View Selection Buttons - SANTANDER styling */
+.view-button {
+  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(247,250,252,0.95) 100%) !important;
+  border: 2px solid var(--santander-red) !important;
+  color: var(--santander-red) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  padding: 10px 18px !important;
+  transition: all 0.3s ease-in-out !important;
+  backdrop-filter: blur(4px) !important;
+  border-radius: 8px !important;
+}
+
+.view-button:hover {
+  background: linear-gradient(135deg, var(--santander-light-red) 0%, rgba(254,215,215,0.8) 100%) !important;
+  border-color: var(--santander-dark-red) !important;
+  color: var(--santander-dark-red) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3) !important;
+}
+
+.active-view.view-button {
+  background: linear-gradient(135deg, var(--santander-red) 0%, var(--santander-dark-red) 100%) !important;
+  border-color: var(--santander-red) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4) !important;
+}
+
+.active-view.view-button:hover {
+  background: linear-gradient(135deg, var(--santander-dark-red) 0%, #991b1b 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(229, 62, 62, 0.5) !important;
+}
+
+/* Button group spacing */
+.btn-group-sm > .btn,
+.btn-sm {
+  border-radius: 6px !important;
+}
+
+.btn-group > .btn:not(:first-child) {
+  margin-left: -1px;
+}
+
+.btn-group > .btn:first-child {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.btn-group > .btn:last-child {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.btn-group > .btn:not(:first-child):not(:last-child) {
+  border-radius: 0 !important;
+}
+
+/* ULTIMATE dropdown fix - override everything - SANTANDER */
+* [class*="Select-control"],
+* [class*="dropdown"] [class*="control"],
+* .dropdown * {
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+  border-color: var(--santander-red) !important;
+  color: var(--text) !important;
+}
+
+/* Make sure React-Select components are SANTANDER */
+.css-1pahdxg-control,
+.css-1s2u09g-control,
+.css-1hwfws3,
+[class*="css-"][class*="control"] {
+  background-color: var(--bg) !important;
+  border-color: var(--santander-red) !important;
+  color: var(--text) !important;
+}
+
+/* Force all possible Dash dropdown variants */
+.dash-dropdown,
+div[data-dash-is-loading],
+._dash-undo-redo {
+  background-color: var(--bg) !important;
+}
+
+/* Apply to all children of dropdown containers */
+.dash-dropdown > *,
+.dash-dropdown * {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* DROPDOWN MENU - SANTANDER theme */
+.Select-menu-outer,
+.dash-dropdown .Select-menu-outer,
+.Select-menu,
+.dash-dropdown .Select-menu,
+.VirtualizedSelectOption,
+.dash-dropdown .VirtualizedSelectOption,
+.VirtualizedSelectFocusedOption,
+.dash-dropdown .VirtualizedSelectFocusedOption {
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--santander-red) !important;
+}
+
+/* Dropdown options */
+.Select-option,
+.dash-dropdown .Select-option {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  padding: 10px 14px !important;
+  transition: all 0.2s ease !important;
+}
+
+.Select-option:hover,
+.dash-dropdown .Select-option:hover {
+  background-color: var(--santander-light-red) !important;
+  color: var(--santander-dark-red) !important;
+  font-weight: 600 !important;
+}
+
+/* Multi-select values */
+.Select-multi-value-wrapper,
+.Select-value,
+.dash-dropdown .Select-multi-value-wrapper,
+.dash-dropdown .Select-value {
+  background-color: var(--santander-light-red) !important;
+  color: var(--santander-dark-red) !important;
+  border: 1px solid var(--santander-red) !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+}

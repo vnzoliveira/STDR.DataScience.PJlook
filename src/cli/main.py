@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -17,6 +18,15 @@ from ..features.sector_analysis import SectorBenchmarkEngine
 from ..features.company_summary import build_companies_summary
 from ..sna.relations import relations_monthly, relation_importance
 
+# Azure Blob integration (optional)
+try:
+    from .azure_sync import download_processed_data, upload_model_outputs
+    AZURE_AVAILABLE = True
+except ImportError:
+    AZURE_AVAILABLE = False
+    log = logging.getLogger(__name__)
+    log.warning("Azure Blob integration not available")
+
 EXPORTS_DIR = Path("reports/exports")
 EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -24,7 +34,45 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(
 log = logging.getLogger(__name__)
 
 
+def sync_from_azure():
+    """Download processed data from Azure Blob if configured"""
+    if not AZURE_AVAILABLE:
+        log.info("Azure sync disabled - using local data")
+        return
+    
+    if not os.getenv("AZURE_STORAGE_CONNECTION_STRING") and not os.getenv("AZURE_STORAGE_ACCOUNT"):
+        log.info("Azure credentials not configured - using local data")
+        return
+    
+    log.info("Syncing data from Azure Blob...")
+    try:
+        download_processed_data()
+        log.info("✓ Azure download complete")
+    except Exception as e:
+        log.warning(f"Azure download failed: {e}")
+        log.info("Continuing with local data...")
+
+
+def sync_to_azure():
+    """Upload model outputs to Azure Blob if configured"""
+    if not AZURE_AVAILABLE:
+        return
+    
+    if not os.getenv("AZURE_STORAGE_CONNECTION_STRING") and not os.getenv("AZURE_STORAGE_ACCOUNT"):
+        return
+    
+    log.info("Uploading results to Azure Blob...")
+    try:
+        upload_model_outputs()
+        log.info("✓ Azure upload complete")
+    except Exception as e:
+        log.error(f"Azure upload failed: {e}")
+
+
 def build_all() -> None:
+    # 0) Sync from Azure (if configured)
+    sync_from_azure()
+    
     # 1) ETL
     log.info("Iniciando ingestão das bases...")
     ingest_bases()
@@ -126,6 +174,9 @@ def build_all() -> None:
     rel_out.to_parquet(EXPORTS_DIR / "relations_latest.parquet", index=False)
 
     log.info("Pipeline concluído com sucesso.")
+    
+    # Upload results to Azure (if configured)
+    sync_to_azure()
 
 
 def main():

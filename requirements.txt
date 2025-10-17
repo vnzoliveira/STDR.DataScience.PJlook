@@ -7,6 +7,11 @@ scipy>=1.16.0
 # Database & Storage
 duckdb>=1.4.0
 
+# Azure Cloud Integration
+azure-storage-blob>=12.19.0
+azure-identity>=1.15.0
+azure-keyvault-secrets>=4.7.0
+
 # Machine Learning
 scikit-learn>=1.7.0
 

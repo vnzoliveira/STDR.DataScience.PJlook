@@ -1,0 +1,25 @@
+# Code Owners for FIAP Challenge
+
+# Infrastructure
+/terraform/              @vnzoliveira
+/nomad/                  @vnzoliveira
+/.github/workflows/      @vnzoliveira
+
+# Azure Functions
+/azure-functions/        @vnzoliveira
+
+# Docker
+/docker/                 @vnzoliveira
+
+# Python Code
+/src/                    @vnzoliveira
+/tests/                  @vnzoliveira
+
+# Configuration
+/configs/                @vnzoliveira
+requirements.txt         @vnzoliveira
+
+# Documentation
+*.md                     @vnzoliveira
+
+

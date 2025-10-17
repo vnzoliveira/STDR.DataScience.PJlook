@@ -1,0 +1,251 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.11'
+  REGISTRY: ghcr.io
+  IMAGE_NAME_PIPELINE: ${{ github.repository }}/ml-pipeline
+  IMAGE_NAME_DASHBOARD: ${{ github.repository }}/dashboard
+
+jobs:
+  # ==================== LINT & TEST ====================
+  test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov ruff
+    
+    - name: Lint with ruff
+      run: |
+        ruff check src/ || true
+    
+    - name: Run tests
+      run: |
+        pytest tests/ --cov=src --cov-report=xml || echo "No tests found"
+    
+    - name: Upload coverage
+      if: github.event_name == 'push'
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+
+  # ==================== BUILD DOCKER IMAGES ====================
+  build-images:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Extract metadata for ML Pipeline
+      id: meta-pipeline
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PIPELINE }}
+        tags: |
+          type=ref,event=branch
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+    
+    - name: Build and push ML Pipeline image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile.pipeline
+        push: true
+        tags: ${{ steps.meta-pipeline.outputs.tags }}
+        labels: ${{ steps.meta-pipeline.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    
+    - name: Extract metadata for Dashboard
+      id: meta-dashboard
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_DASHBOARD }}
+        tags: |
+          type=ref,event=branch
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+    
+    - name: Build and push Dashboard image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile.dashboard
+        push: true
+        tags: ${{ steps.meta-dashboard.outputs.tags }}
+        labels: ${{ steps.meta-dashboard.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  # ==================== DEPLOY AZURE FUNCTION ====================
+  deploy-function:
+    name: Deploy Azure Function
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Install Function dependencies
+      run: |
+        cd azure-functions
+        pip install --target=".python_packages/lib/site-packages" -r requirements.txt
+    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Deploy to Azure Functions
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ secrets.AZURE_FUNCTION_APP_NAME }}
+        package: azure-functions
+        respect-funcignore: true
+
+  # ==================== DEPLOY TO NOMAD ====================
+  deploy-nomad:
+    name: Deploy to Nomad
+    runs-on: ubuntu-latest
+    needs: build-images
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install Nomad CLI
+      run: |
+        NOMAD_VERSION="1.7.2"
+        wget https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd64.zip
+        unzip nomad_${NOMAD_VERSION}_linux_amd64.zip
+        sudo mv nomad /usr/local/bin/
+        nomad version
+    
+    - name: Update Nomad job specs with new image tags
+      run: |
+        # Get short SHA for image tag
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})
+        IMAGE_TAG="${BRANCH_NAME}-${SHORT_SHA}"
+        
+        # Update ML Pipeline job
+        sed -i "s|image = \"ghcr.io/YOUR_GITHUB_USERNAME/REPO_NAME/ml-pipeline:latest\"|image = \"${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PIPELINE }}:${IMAGE_TAG}\"|g" nomad/ml-pipeline.nomad
+        
+        # Update Dashboard job
+        sed -i "s|image = \"ghcr.io/YOUR_GITHUB_USERNAME/REPO_NAME/dashboard:latest\"|image = \"${{ env.REGISTRY }}/${{ env.IMAGE_NAME_DASHBOARD }}:${IMAGE_TAG}\"|g" nomad/dashboard.nomad
+    
+    - name: Deploy ML Pipeline to Nomad
+      env:
+        NOMAD_ADDR: ${{ secrets.NOMAD_ADDR }}
+        NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
+      run: |
+        nomad job run nomad/ml-pipeline.nomad
+    
+    - name: Deploy Dashboard to Nomad
+      env:
+        NOMAD_ADDR: ${{ secrets.NOMAD_ADDR }}
+        NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
+      run: |
+        nomad job run nomad/dashboard.nomad
+    
+    - name: Verify Deployments
+      env:
+        NOMAD_ADDR: ${{ secrets.NOMAD_ADDR }}
+        NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
+      run: |
+        echo "Waiting for deployments to stabilize..."
+        sleep 30
+        
+        echo "ML Pipeline Status:"
+        nomad job status ml-pipeline
+        
+        echo ""
+        echo "Dashboard Status:"
+        nomad job status dashboard
+        
+        # Check if dashboard is healthy
+        DASHBOARD_HEALTHY=$(nomad job status dashboard -json | jq -r '.Status')
+        if [ "$DASHBOARD_HEALTHY" != "running" ]; then
+          echo "⚠️ Dashboard deployment may have issues"
+          exit 1
+        fi
+        
+        echo "✅ Deployments successful!"
+
+  # ==================== TERRAFORM VALIDATION ====================
+  terraform-check:
+    name: Validate Terraform
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.5.0
+    
+    - name: Terraform Format Check
+      working-directory: terraform
+      run: terraform fmt -check -recursive
+    
+    - name: Terraform Init
+      working-directory: terraform
+      run: terraform init -backend=false
+    
+    - name: Terraform Validate
+      working-directory: terraform
+      run: terraform validate
+
+

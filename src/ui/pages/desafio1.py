@@ -472,18 +472,9 @@ def _executive_view(df: pd.DataFrame):
         fig_correlation.add_trace(go.Scatter(
             x=_safe_num(df["receita_mensal"]), y=_safe_num(df["g_receita_mom"]) * 100,
             mode="markers",
-<<<<<<< Updated upstream
-            marker=dict(
-                size=12,
-                color=_safe_num(df.get("fluxo_liquido", 0.0)),
-                colorscale="RdYlGn", 
-                showscale=True,
-                colorbar=dict(title="Fluxo", len=0.7)
-            ),
-=======
             marker=dict(size=12, color=_safe_num(df.get("fluxo_liquido", 0.0)),
                         colorscale="RdYlGn", showscale=True,
-                        colorbar=dict(title="Fluxo", len=0.7, tickcolor="#e5e7eb", title=dict(color="#e5e7eb"))),
+                        colorbar=dict(title="Fluxo", len=0.7, tickcolor="#e5e7eb")),
             text=df["ym_str"],
             hovertemplate="Mês: %{text}<br>Receita: %{x:,.0f}<br>Crescimento: %{y:.1f}%<extra></extra>"
         ))
@@ -493,8 +484,8 @@ def _executive_view(df: pd.DataFrame):
         font={'color': "#e5e7eb", 'size': 12}, showlegend=False,
         margin=dict(l=40, r=40, t=50, b=40)
     )
-    fig_correlation.update_xaxes(gridcolor='#334155', title="Receita", tickfont=dict(color="#e5e7eb"), title=dict(color="#e5e7eb"))
-    fig_correlation.update_yaxes(gridcolor='#334155', title="Crescimento %", tickfont=dict(color="#e5e7eb"), title=dict(color="#e5e7eb"))
+    fig_correlation.update_xaxes(gridcolor='#334155', title="Receita", tickfont=dict(color="#e5e7eb"))
+    fig_correlation.update_yaxes(gridcolor='#334155', title="Crescimento %", tickfont=dict(color="#e5e7eb"))
     fig_correlation.layout.meta = {"timestamp": timestamp, "cache_bust": True}
 
     return html.Div([

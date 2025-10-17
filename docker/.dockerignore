@@ -1,0 +1,61 @@
+# Ignore unnecessary files
+.git
+.gitignore
+.github
+.vscode
+.idea
+
+# Python
+__pycache__
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+*.egg-info
+
+# Virtual environments
+.venv
+venv
+source
+
+# Data files
+data/raw/*
+data/processed/*
+reports/exports/*
+reports/logs/*
+*.parquet
+*.csv
+*.xlsx
+*.xls
+
+# Keep structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Documentation
+README.md
+*.pdf
+docs/
+
+# Terraform
+terraform/
+*.tfstate
+*.tfvars
+
+# Azure Functions
+azure-functions/
+
+# Nomad
+nomad/
+
+# Other
+tmp/
+logs/
+.env
+.env.*
+*.local.yaml
+
+

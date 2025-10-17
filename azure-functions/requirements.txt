@@ -1,0 +1,11 @@
+# Azure Functions requirements
+azure-functions
+azure-storage-blob>=12.19.0
+azure-identity>=1.15.0
+
+# Data processing
+pandas>=2.3.0
+pyarrow>=21.0.0
+openpyxl>=3.1.5
+
+

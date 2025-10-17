@@ -1,0 +1,21 @@
+# Example Terraform Variables
+# Copy this file to terraform.tfvars and fill in your values
+# WARNING: Do NOT commit terraform.tfvars to git!
+
+project_name = "fiapchallenge"
+environment  = "dev"
+location     = "brazilsouth"
+
+# VM Configuration
+nomad_vm_count = 1  # Use 3 for production
+nomad_vm_size  = "Standard_B2ms"  # B1ms for dev, B2ms for testing
+
+# Admin Access
+admin_username       = "azureuser"
+admin_ssh_public_key = "ssh-rsa AAAAB3... your-public-key-here"
+
+# Auto Shutdown (dev only)
+enable_auto_shutdown = true
+auto_shutdown_time   = "1900"  # 7 PM
+
+

@@ -92,6 +92,25 @@ reports/logs/
 *.duckdb.wal
 
 # -----------------------------
+# Terraform
+# -----------------------------
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+!environments/*.tfvars
+.terraform.lock.hcl
+crash.log
+
+# -----------------------------
+# Azure Functions
+# -----------------------------
+.python_packages/
+.vscode/launch.json
+local.settings.json
+
+# -----------------------------
 # Outros
 # -----------------------------
 logs/

@@ -10,11 +10,11 @@ import pandas as pd
 from ..etl.ingest import ingest_bases
 from ..etl.validate import run_checks
 from ..features.metrics import build_f_empresa_mes
-from ..features.stage import classify_stage
 from ..features.advanced_stage import classify_advanced_stage
 from ..features.supervised_stage import train_and_classify_stages
 from ..features.ensemble_model import EnsembleStagePredictor
 from ..features.sector_analysis import SectorBenchmarkEngine
+from ..features.company_summary import build_companies_summary
 from ..sna.relations import relations_monthly, relation_importance
 
 EXPORTS_DIR = Path("reports/exports")
@@ -40,17 +40,12 @@ def build_all() -> None:
     (EXPORTS_DIR / "f_empresa_mes.parquet").parent.mkdir(parents=True, exist_ok=True)
     f.to_parquet(EXPORTS_DIR / "f_empresa_mes.parquet", index=False)
 
-    # 3) Baseline legado (não supervisionado simples)
-    log.info("Classificando estágios (baseline simples - legado)...")
-    est_simple = classify_stage(f)
-    est_simple.to_parquet(EXPORTS_DIR / "estagio_simple.parquet", index=False)
-
-    # 4) Não supervisionado avançado
+    # 3) Não supervisionado avançado
     log.info("Classificando estágios (não-supervisionado avançado)...")
     est_advanced = classify_advanced_stage(f, months_window=6)
     est_advanced.to_parquet(EXPORTS_DIR / "estagio_unsupervised.parquet", index=False)
 
-    # 5) Supervisionado/híbrido Base1+Base2
+    # 4) Supervisionado/híbrido Base1+Base2
     try:
         log.info("Executando classificação supervisionada (híbrido)...")
         b1 = pd.read_parquet("data/processed/base1/base1.parquet")
@@ -58,7 +53,7 @@ def build_all() -> None:
         est_sup = train_and_classify_stages(b1, b2)
         est_sup.to_parquet(EXPORTS_DIR / "estagio.parquet", index=False)
         
-        # 6) Modelo Ensemble avançado
+        # 5) Modelo Ensemble avançado
         log.info("Treinando modelo ensemble...")
         ensemble = EnsembleStagePredictor(use_neural_network=False)  # Sem NN para simplicidade
         
@@ -79,7 +74,7 @@ def build_all() -> None:
         ensemble_preds = ensemble.predict(combined_df)
         ensemble_preds.to_parquet(EXPORTS_DIR / "estagio_ensemble.parquet", index=False)
         
-        # 7) Análise setorial
+        # 6) Análise setorial
         log.info("Executando análise setorial...")
         sector_engine = SectorBenchmarkEngine()
         
@@ -100,7 +95,17 @@ def build_all() -> None:
         log.exception("Falha no treinamento supervisionado; seguindo com artefatos não supervisionados.")
         est_advanced.to_parquet(EXPORTS_DIR / "estagio.parquet", index=False)
 
-    # 6) Relações (SNA) agregadas
+    try:
+        b1 = pd.read_parquet("data/processed/base1/base1.parquet")
+    except Exception:
+        b1 = pd.DataFrame()
+
+    est_final = pd.read_parquet(EXPORTS_DIR / "estagio.parquet")
+    companies = build_companies_summary(f, est_final, b1)
+    companies.to_parquet(EXPORTS_DIR / "companies.parquet", index=False)
+    log.info("Gerado reports/exports/companies.parquet (%d empresas).", len(companies))
+
+    # 7) Relações (SNA) agregadas
     log.info("Gerando relações mensais...")
     df_rel = relations_monthly()
 

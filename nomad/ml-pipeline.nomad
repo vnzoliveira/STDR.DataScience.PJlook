@@ -24,7 +24,7 @@ job "ml-pipeline" {
       driver = "docker"
       
       config {
-        image = "ghcr.io/YOUR_GITHUB_USERNAME/REPO_NAME/ml-pipeline:latest"
+        image = "ghcr.io/vnzoliveira/STDR.DataScience.PJlook/ml-pipeline:latest"
         
         # Azure CLI needs to authenticate
         auth {

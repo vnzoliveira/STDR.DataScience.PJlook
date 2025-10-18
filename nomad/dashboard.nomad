@@ -30,7 +30,7 @@ job "dashboard" {
       driver = "docker"
       
       config {
-        image = "ghcr.io/YOUR_GITHUB_USERNAME/REPO_NAME/dashboard:latest"
+        image = "ghcr.io/vnzoliveira/STDR.DataScience.PJlook/dashboard:latest"
         
         auth {
           username = "${DOCKER_USERNAME}"
